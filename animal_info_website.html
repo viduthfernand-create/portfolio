@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WORLD ANIMALIA - Animal Encyclopedia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+        }
+
+        .search-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .search-box {
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .category-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .category-title {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .category-desc {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .animals-grid {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .animals-grid.active {
+            display: grid;
+        }
+
+        .animal-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .animal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .animal-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #ff9a8b, #fecfef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .animal-info {
+            padding: 20px;
+        }
+
+        .animal-name {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .animal-details {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .animal-facts {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .fact-title {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .search-box {
+                width: 250px;
+            }
+            
+            .categories {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 WORLD ANIMALIA</h1>
+            <p class="subtitle">Discover Amazing Facts About Animals</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Search for animals..." id="searchBox">
+        </div>
+
+        <div id="categoriesView">
+            <div class="categories">
+                <div class="category-card" onclick="showAnimals('mammals')">
+                    <div class="category-icon">🦁</div>
+                    <div class="category-title">Mammals</div>
+                    <div class="category-desc">Lions, Elephants, Tigers & More</div>
+                </div>
+                
+                <div class="category-card" onclick="showAnimals('birds')">
+                    <div class="category-icon">🦅</div>
+                    <div class="category-title">Birds</div>
+                    <div class="category-desc">Eagles, Parrots, Penguins & More</div>
+                </div>
+                
+                <div class="category-card" onclick="showAnimals('marine')">
+                    <div class="category-icon">🐋</div>
+                    <div class="category-title">Marine Life</div>
+                    <div class="category-desc">Whales, Sharks, Dolphins & More</div>
+                </div>
+                
+                <div class="category-card" onclick="showAnimals('reptiles')">
+                    <div class="category-icon">🐍</div>
+                    <div class="category-title">Reptiles</div>
+                    <div class="category-desc">Snakes, Lizards, Crocodiles & More</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="animalsView">
+            <button class="back-btn" onclick="goBack()">← Back to Categories</button>
+            <div class="animals-grid" id="animalsGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        const animalData = {
+            mammals: [
+                {
+                    name: "African Lion",
+                    emoji: "🦁",
+                    habitat: "African Savanna",
+                    diet: "Carnivore",
+                    lifespan: "12-16 years",
+                    facts: "Lions are the only cats that live in groups called prides. A lion's roar can be heard from up to 5 miles away!",
+                    weight: "150-250 kg",
+                    speed: "80 km/h"
+                },
+                {
+                    name: "African Elephant",
+                    emoji: "🐘",
+                    habitat: "African Savanna & Forests",
+                    diet: "Herbivore",
+                    lifespan: "60-70 years",
+                    facts: "Elephants have excellent memory and can recognize themselves in mirrors. They mourn their dead and have complex social structures.",
+                    weight: "4000-6000 kg",
+                    speed: "40 km/h"
+                },
+                {
+                    name: "Bengal Tiger",
+                    emoji: "🐅",
+                    habitat: "Indian Forests",
+                    diet: "Carnivore",
+                    lifespan: "10-15 years",
+                    facts: "Tigers are excellent swimmers and each tiger has a unique stripe pattern, like human fingerprints!",
+                    weight: "180-260 kg",
+                    speed: "65 km/h"
+                },
+                {
+                    name: "Giant Panda",
+                    emoji: "🐼",
+                    habitat: "Chinese Mountains",
+                    diet: "Herbivore (Bamboo)",
+                    lifespan: "20 years",
+                    facts: "Pandas spend 14 hours a day eating bamboo! They have a pseudo-thumb to help them grip bamboo stalks.",
+                    weight: "85-125 kg",
+                    speed: "20 km/h"
+                }
+            ],
+            birds: [
+                {
+                    name: "Bald Eagle",
+                    emoji: "🦅",
+                    habitat: "North America",
+                    diet: "Carnivore (Fish)",
+                    lifespan: "20-30 years",
+                    facts: "Bald eagles can see fish in water from 100 feet above! They build the largest nests of any North American bird.",
+                    weight: "3-6 kg",
+                    speed: "160 km/h (diving)"
+                },
+                {
+                    name: "Emperor Penguin",
+                    emoji: "🐧",
+                    habitat: "Antarctica",
+                    diet: "Carnivore (Fish)",
+                    lifespan: "15-20 years",
+                    facts: "Male penguins incubate eggs on their feet for 2 months without eating, losing up to 45% of their body weight!",
+                    weight: "22-45 kg",
+                    speed: "9 km/h swimming"
+                },
+                {
+                    name: "Scarlet Macaw",
+                    emoji: "🦜",
+                    habitat: "South American Rainforests",
+                    diet: "Omnivore",
+                    lifespan: "40-50 years",
+                    facts: "Macaws can live over 100 years and mate for life! They use tools and have the intelligence of a 3-year-old child.",
+                    weight: "1 kg",
+                    speed: "55 km/h"
+                }
+            ],
+            marine: [
+                {
+                    name: "Blue Whale",
+                    emoji: "🐋",
+                    habitat: "All Oceans",
+                    diet: "Krill",
+                    lifespan: "80-90 years",
+                    facts: "Blue whales are the largest animals ever known to have lived on Earth! Their hearts alone can weigh as much as a car.",
+                    weight: "150,000 kg",
+                    speed: "30 km/h"
+                },
+                {
+                    name: "Great White Shark",
+                    emoji: "🦈",
+                    habitat: "Coastal Waters Worldwide",
+                    diet: "Carnivore",
+                    lifespan: "30-70 years",
+                    facts: "Great whites can detect a drop of blood in 25 gallons of water and sense electrical fields from other animals!",
+                    weight: "680-1100 kg",
+                    speed: "56 km/h"
+                },
+                {
+                    name: "Bottlenose Dolphin",
+                    emoji: "🐬",
+                    habitat: "Warm Waters Worldwide",
+                    diet: "Carnivore (Fish)",
+                    lifespan: "40-45 years",
+                    facts: "Dolphins have names for each other (signature whistles) and can recognize themselves in mirrors!",
+                    weight: "150-650 kg",
+                    speed: "35 km/h"
+                }
+            ],
+            reptiles: [
+                {
+                    name: "Saltwater Crocodile",
+                    emoji: "🐊",
+                    habitat: "Southeast Asia & Australia",
+                    diet: "Carnivore",
+                    lifespan: "70+ years",
+                    facts: "Saltwater crocodiles have the strongest bite force of any living animal - over 3,700 PSI!",
+                    weight: "400-1000 kg",
+                    speed: "25 km/h"
+                },
+                {
+                    name: "King Cobra",
+                    emoji: "🐍",
+                    habitat: "Southeast Asian Forests",
+                    diet: "Carnivore (Snakes)",
+                    lifespan: "20 years",
+                    facts: "King cobras are the longest venomous snakes and can 'stand up' to 1/3 of their body length!",
+                    weight: "6 kg",
+                    speed: "19 km/h"
+                },
+                {
+                    name: "Galápagos Tortoise",
+                    emoji: "🐢",
+                    habitat: "Galápagos Islands",
+                    diet: "Herbivore",
+                    lifespan: "100+ years",
+                    facts: "These tortoises can live over 150 years and inspired Darwin's theory of evolution!",
+                    weight: "250 kg",
+                    speed: "0.3 km/h"
+                }
+            ]
+        };
+
+        let currentView = 'categories';
+
+        function showAnimals(category) {
+            currentView = 'animals';
+            document.getElementById('categoriesView').style.display = 'none';
+            document.getElementById('animalsView').style.display = 'block';
+            
+            const animalsGrid = document.getElementById('animalsGrid');
+            animalsGrid.innerHTML = '';
+            
+            animalData[category].forEach(animal => {
+                const animalCard = createAnimalCard(animal);
+                animalsGrid.appendChild(animalCard);
+            });
+            
+            animalsGrid.classList.add('active');
+        }
+
+        function createAnimalCard(animal) {
+            const card = document.createElement('div');
+            card.className = 'animal-card';
+            
+            card.innerHTML = `
+                <div class="animal-image">${animal.emoji}</div>
+                <div class="animal-info">
+                    <div class="animal-name">${animal.name}</div>
+                    <div class="animal-details">
+                        <strong>Habitat:</strong> ${animal.habitat}<br>
+                        <strong>Diet:</strong> ${animal.diet}<br>
+                        <strong>Lifespan:</strong> ${animal.lifespan}<br>
+                        <strong>Weight:</strong> ${animal.weight}<br>
+                        <strong>Speed:</strong> ${animal.speed}
+                    </div>
+                    <div class="animal-facts">
+                        <div class="fact-title">Amazing Fact:</div>
+                        ${animal.facts}
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function goBack() {
+            currentView = 'categories';
+            document.getElementById('categoriesView').style.display = 'block';
+            document.getElementById('animalsView').style.display = 'none';
+            document.getElementById('animalsGrid').classList.remove('active');
+        }
+
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            
+            if (query.length > 2) {
+                const results = [];
+                
+                Object.keys(animalData).forEach(category => {
+                    animalData[category].forEach(animal => {
+                        if (animal.name.toLowerCase().includes(query) || 
+                            animal.habitat.toLowerCase().includes(query) ||
+                            animal.diet.toLowerCase().includes(query)) {
+                            results.push(animal);
+                        }
+                    });
+                });
+                
+                if (results.length > 0) {
+                    currentView = 'animals';
+                    document.getElementById('categoriesView').style.display = 'none';
+                    document.getElementById('animalsView').style.display = 'block';
+                    
+                    const animalsGrid = document.getElementById('animalsGrid');
+                    animalsGrid.innerHTML = '';
+                    
+                    results.forEach(animal => {
+                        const animalCard = createAnimalCard(animal);
+                        animalsGrid.appendChild(animalCard);
+                    });
+                    
+                    animalsGrid.classList.add('active');
+                }
+            } else if (query.length === 0 && currentView === 'animals') {
+                goBack();
+            }
+        });
+    </script>
+</body>
+</html>
